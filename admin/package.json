@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "connected-react-router": "^6.3.2",
+    "email-validator": "^2.0.4",
     "history": "^4.9.0",
     "immutable": "^4.0.0-rc.12",
     "react": "^16.8.4",
@@ -12,6 +13,7 @@
     "react-router-dom": "^5.0.0",
     "react-scripts": "2.1.8",
     "redux": "^4.0.1",
+    "redux-form": "^8.2.4",
     "redux-logger": "^3.0.6"
   },
   "scripts": {
