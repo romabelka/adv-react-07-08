@@ -103,7 +103,3 @@ export function signUp(email, password) {
     }
   }
 }
-
-firebase.auth().onAuthStateChanged((user) => {
-  console.log('Auth state changed:', user)
-})
