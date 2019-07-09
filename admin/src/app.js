@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Route, NavLink } from 'react-router-dom'
 import AuthPage from './components/routes/auth'
 import AdminPage from './components/routes/admin'
+import withAuthentication from './decorators/withAuthentication'
 
 class App extends Component {
   static propTypes = {}
@@ -32,4 +33,4 @@ class App extends Component {
   }
 }
 
-export default App
+export default withAuthentication(App)
