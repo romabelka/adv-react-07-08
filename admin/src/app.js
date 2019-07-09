@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
-import { Route, NavLink } from 'react-router-dom'
+import { Route, NavLink, Switch } from 'react-router-dom'
 import AuthPage from './components/routes/auth'
 import AdminPage from './components/routes/admin'
+import ProtectedRoute from './components/routes/protected-route'
 
 class App extends Component {
   static propTypes = {}
@@ -24,8 +25,10 @@ class App extends Component {
           </ul>
         </nav>
         <section>
-          <Route path="/auth" component={AuthPage} />
-          <Route path="/admin" component={AdminPage} />
+          <Switch>
+            <Route path="/auth" component={AuthPage} />
+            <ProtectedRoute path="/admin" component={AdminPage} />
+          </Switch>
         </section>
       </div>
     )
