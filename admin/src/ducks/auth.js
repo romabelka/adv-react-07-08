@@ -1,6 +1,6 @@
 import { appName } from '../config'
 import { Record } from 'immutable'
-import firebase from 'firebase/app'
+import firebase from 'firebase'
 
 /**
  * Constants
