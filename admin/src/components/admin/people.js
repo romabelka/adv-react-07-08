@@ -3,7 +3,6 @@ import { connect } from 'react-redux'
 import { peopleSelector } from '../../ducks/admin'
 
 function People({ people }) {
-  console.log('people--', people)
   return (
     <ul>
       {people.map(({ email, firstName, lastName }) => (
