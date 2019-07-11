@@ -1,5 +1,6 @@
 import { appName } from '../config'
 import { all, takeEvery, take, call, put } from 'redux-saga/effects'
+import { delay } from 'redux-saga'
 import { Record } from 'immutable'
 import { createSelector } from 'reselect'
 import api from '../services/api'
@@ -19,6 +20,9 @@ export const SIGN_UP_START = `${prefix}/SIGN_UP_START`
 export const SIGN_UP_SUCCESS = `${prefix}/SIGN_UP_SUCCESS`
 export const SIGN_UP_ERROR = `${prefix}/SIGN_UP_ERROR`
 export const SIGN_UP_REQUEST = `${prefix}/SIGN_UP_REQUEST`
+
+export const SIGN_IN_ERROR_LIMIT = `${prefix}/SIGN_IN_ERROR_LIMIT`
+export const SIGN_IN_ERROR_LIMIT_CLEAR = `${prefix}/SIGN_IN_ERROR_LIMIT_CLEAR`
 
 /**
  * Reducer
@@ -95,23 +99,45 @@ export function init(store) {
  *Sagas
  **/
 
-export function* signInSaga({ payload }) {
-  yield put({
-    type: SIGN_IN_START
-  })
+export function* signInSaga() {
+  let errors = 0
 
-  try {
-    const user = yield call(api.signIn, payload.email, payload.password)
+  while (true) {
+    if (errors > 3) {
+      yield put({
+        type: SIGN_IN_ERROR_LIMIT
+      })
+
+      yield delay(4000)
+
+      yield put({
+        type: SIGN_IN_ERROR_LIMIT_CLEAR
+      })
+
+      errors = 0
+    }
+
+    const { payload } = yield take(SIGN_IN_REQUEST)
 
     yield put({
-      type: SIGN_IN_SUCCESS,
-      payload: { user }
+      type: SIGN_IN_START
     })
-  } catch (error) {
-    yield put({
-      type: SIGN_IN_ERROR,
-      error
-    })
+
+    try {
+      const user = yield call(api.signIn, payload.email, payload.password)
+
+      yield put({
+        type: SIGN_IN_SUCCESS,
+        payload: { user }
+      })
+    } catch (error) {
+      yield put({
+        type: SIGN_IN_ERROR,
+        error
+      })
+
+      errors++
+    }
   }
 }
 
@@ -136,8 +162,5 @@ export function* signUpSaga({ payload }) {
 }
 
 export function* saga() {
-  yield all([
-    takeEvery(SIGN_IN_REQUEST, signInSaga),
-    takeEvery(SIGN_UP_REQUEST, signUpSaga)
-  ])
+  yield all([signInSaga(), takeEvery(SIGN_UP_REQUEST, signUpSaga)])
 }
