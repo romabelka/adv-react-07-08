@@ -1,6 +1,5 @@
 import { appName } from '../config'
-import { all, takeEvery, take, call, put } from 'redux-saga/effects'
-import { delay } from 'redux-saga'
+import { all, takeEvery, take, call, put, delay } from 'redux-saga/effects'
 import { Record } from 'immutable'
 import { createSelector } from 'reselect'
 import api from '../services/api'
