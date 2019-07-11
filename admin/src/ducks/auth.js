@@ -1,4 +1,5 @@
 import { appName } from '../config'
+import { all, takeEvery, take, call, put } from 'redux-saga/effects'
 import { Record } from 'immutable'
 import { createSelector } from 'reselect'
 import api from '../services/api'
@@ -12,10 +13,12 @@ const prefix = `${appName}/${moduleName}`
 export const SIGN_IN_START = `${prefix}/SIGN_IN_START`
 export const SIGN_IN_SUCCESS = `${prefix}/SIGN_IN_SUCCESS`
 export const SIGN_IN_ERROR = `${prefix}/SIGN_IN_ERROR`
+export const SIGN_IN_REQUEST = `${prefix}/SIGN_IN_REQUEST`
 
 export const SIGN_UP_START = `${prefix}/SIGN_UP_START`
 export const SIGN_UP_SUCCESS = `${prefix}/SIGN_UP_SUCCESS`
 export const SIGN_UP_ERROR = `${prefix}/SIGN_UP_ERROR`
+export const SIGN_UP_REQUEST = `${prefix}/SIGN_UP_REQUEST`
 
 /**
  * Reducer
@@ -62,46 +65,16 @@ export const isAuthorizedSelector = createSelector(
  * */
 
 export function signIn(email, password) {
-  return async (dispatch) => {
-    dispatch({
-      type: SIGN_IN_START
-    })
-
-    try {
-      const user = await api.signIn(email, password)
-
-      dispatch({
-        type: SIGN_IN_SUCCESS,
-        payload: { user }
-      })
-    } catch (error) {
-      dispatch({
-        type: SIGN_IN_ERROR,
-        error
-      })
-    }
+  return {
+    type: SIGN_IN_REQUEST,
+    payload: { email, password }
   }
 }
 
 export function signUp(email, password) {
-  return async (dispatch) => {
-    dispatch({
-      type: SIGN_UP_START
-    })
-
-    try {
-      const user = await api.signUp(email, password)
-
-      dispatch({
-        type: SIGN_UP_SUCCESS,
-        payload: { user }
-      })
-    } catch (error) {
-      dispatch({
-        type: SIGN_UP_ERROR,
-        error
-      })
-    }
+  return {
+    type: SIGN_UP_REQUEST,
+    payload: { email, password }
   }
 }
 
@@ -116,4 +89,55 @@ export function init(store) {
       payload: { user }
     })
   })
+}
+
+/**
+ *Sagas
+ **/
+
+export function* signInSaga({ payload }) {
+  yield put({
+    type: SIGN_IN_START
+  })
+
+  try {
+    const user = yield call(api.signIn, payload.email, payload.password)
+
+    yield put({
+      type: SIGN_IN_SUCCESS,
+      payload: { user }
+    })
+  } catch (error) {
+    yield put({
+      type: SIGN_IN_ERROR,
+      error
+    })
+  }
+}
+
+export function* signUpSaga({ payload }) {
+  yield put({
+    type: SIGN_UP_START
+  })
+
+  try {
+    const user = yield call(api.signUp, payload.email, payload.password)
+
+    yield put({
+      type: SIGN_UP_SUCCESS,
+      payload: { user }
+    })
+  } catch (error) {
+    yield put({
+      type: SIGN_UP_ERROR,
+      error
+    })
+  }
+}
+
+export function* saga() {
+  yield all([
+    takeEvery(SIGN_IN_REQUEST, signInSaga),
+    takeEvery(SIGN_UP_REQUEST, signUpSaga)
+  ])
 }

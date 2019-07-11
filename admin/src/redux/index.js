@@ -1,25 +1,23 @@
 import { createStore, applyMiddleware } from 'redux'
 import { routerMiddleware } from 'connected-react-router'
 import logger from 'redux-logger'
-import thunk from 'redux-thunk'
 import createSagaMiddleware from 'redux-saga'
 import reducer from './reducer'
 import history from '../history'
 import { init as initAuth } from '../ducks/auth'
-import { watchAddPersonRequest } from '../ducks/people'
+import rootSaga from './saga'
 
 const sagaMiddleware = createSagaMiddleware()
 
 const enhancer = applyMiddleware(
   sagaMiddleware,
-  thunk,
   routerMiddleware(history),
   logger
 )
 
 const store = createStore(reducer, enhancer)
 
-sagaMiddleware.run(watchAddPersonRequest)
+sagaMiddleware.run(rootSaga)
 
 initAuth(store)
 

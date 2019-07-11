@@ -79,6 +79,6 @@ export function* addPersonSaga(action) {
   yield put(reset('person'))
 }
 
-export function* watchAddPersonRequest() {
+export function* saga() {
   yield takeEvery(ADD_PERSON_REQUEST, addPersonSaga)
 }
