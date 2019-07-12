@@ -14,6 +14,14 @@ class ApiService {
   signUp = (email, password) =>
     this.fb.auth().createUserWithEmailAndPassword(email, password)
 
+  getCurrentUser = () => this.fb.auth().currentUser
+
+  deleteUser = async (email, password) => {
+    await this.signIn(email, password)
+    const user = this.getCurrentUser()
+    return await user.delete()
+  }
+
   onAuthStateChanged = (callback) => this.fb.auth().onAuthStateChanged(callback)
 
   getDataFromCollection = (collectionName) =>
