@@ -24,6 +24,12 @@ class ApiService {
 
   onAuthStateChanged = (callback) => this.fb.auth().onAuthStateChanged(callback)
 
+  addEntityToCollection = (collectionName, entity) =>
+    this.fb
+      .firestore()
+      .collection(collectionName)
+      .add(entity)
+
   getDataFromCollection = (collectionName) =>
     this.fb
       .firestore()
