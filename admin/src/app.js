@@ -13,6 +13,11 @@ class App extends Component {
         <nav>
           <ul>
             <li>
+              <NavLink to="/admin/conferences" activeStyle={{ color: 'red' }}>
+                Conferences List
+              </NavLink>
+            </li>
+            <li>
               <NavLink to="/admin/people" activeStyle={{ color: 'red' }}>
                 People List
               </NavLink>
