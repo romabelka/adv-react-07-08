@@ -29,7 +29,7 @@ export const SIGN_IN_ERROR_LIMIT_CLEAR = `${prefix}/SIGN_IN_ERROR_LIMIT_CLEAR`
 export const ReducerRecord = Record({
   user: null,
   error: null,
-  loading: null
+  loading: false
 })
 
 export default function reducer(state = new ReducerRecord(), action) {
@@ -102,7 +102,7 @@ export function* signInSaga() {
   let errors = 0
 
   while (true) {
-    if (errors > 3) {
+    if (errors > 2) {
       yield put({
         type: SIGN_IN_ERROR_LIMIT
       })
