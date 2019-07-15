@@ -11,6 +11,9 @@ import EventRow from './event-row'
 
 export class EventsTable extends Component {
   static propTypes = {}
+  static defaultProps = {
+    selectEvent: () => {}
+  }
 
   componentDidMount() {
     this.props.fetchAllEvents()

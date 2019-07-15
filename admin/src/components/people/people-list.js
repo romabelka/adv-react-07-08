@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { fetchAllPeople, peopleSelector } from '../../ducks/people'
+import PersonItem from './person-item'
 
 class PeopleList extends Component {
   static propTypes = {}
@@ -11,13 +12,11 @@ class PeopleList extends Component {
 
   render() {
     return (
-      <div>
+      <ul>
         {this.props.people.map((person) => (
-          <li key={person.id}>
-            {person.firstName}: {person.email}
-          </li>
+          <PersonItem key={person.id} person={person} />
         ))}
-      </div>
+      </ul>
     )
   }
 }

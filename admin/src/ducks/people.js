@@ -18,6 +18,8 @@ export const ADD_PERSON_SUCCESS = `${prefix}/ADD_PERSON_SUCCESS`
 export const FETCH_ALL_REQUEST = `${prefix}/FETCH_ALL_REQUEST`
 export const FETCH_ALL_SUCCESS = `${prefix}/FETCH_ALL_SUCCESS`
 
+export const ADD_EVENT_TO_PERSON = `${prefix}/ADD_EVENT_TO_PERSON`
+
 /**
  * Reducer
  * */
@@ -69,6 +71,11 @@ export const addPerson = (person) => ({
 
 export const fetchAllPeople = () => ({
   type: FETCH_ALL_REQUEST
+})
+
+export const addEventToPerson = (eventId, personId) => ({
+  type: ADD_EVENT_TO_PERSON,
+  payload: { eventId, personId }
 })
 
 /**
