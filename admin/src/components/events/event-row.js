@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import { getEmptyImage } from 'react-dnd-html5-backend'
 import { useDrag } from 'react-dnd'
 
 function EventRow({ event, handleClick }) {
-  const [{ isDragging }, drag] = useDrag({
+  const [{ isDragging }, drag, preview] = useDrag({
     item: { type: `event`, id: event.id },
     collect(monitor) {
       return {
@@ -10,6 +11,10 @@ function EventRow({ event, handleClick }) {
       }
     }
   })
+
+  useEffect(() => {
+    preview(getEmptyImage(), { captureDraggingState: true })
+  }, [])
 
   const dndStyle = {
     opacity: isDragging ? 0.3 : 1

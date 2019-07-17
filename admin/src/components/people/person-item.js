@@ -1,10 +1,11 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useDrop, useDrag } from 'react-dnd'
 import { connect } from 'react-redux'
+import { getEmptyImage } from 'react-dnd-html5-backend'
 import { addEventToPerson } from '../../ducks/people'
 
 function PersonItem({ person, addEventToPerson }) {
-  const [{ isDragging }, drag] = useDrag({
+  const [{ isDragging }, drag, preview] = useDrag({
     item: { type: 'person', id: person.id },
     collect(monitor) {
       return {
@@ -12,6 +13,10 @@ function PersonItem({ person, addEventToPerson }) {
       }
     }
   })
+
+  useEffect(() => {
+    preview(getEmptyImage(), { captureDraggingState: true })
+  }, [])
 
   const [{ canDrop, hovered }, drop] = useDrop({
     accept: ['event'],
