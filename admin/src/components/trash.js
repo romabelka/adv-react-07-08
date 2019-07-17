@@ -1,8 +1,8 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { useDrop } from 'react-dnd'
-import { removePerson } from '../../ducks/people'
-import { removeEvent } from '../../ducks/events'
+import { removePerson } from '../ducks/people'
+import { removeEvent } from '../ducks/events'
 
 function Trash({ removePerson, removeEvent }) {
   const [{ canDrop, hovered }, drop] = useDrop({
