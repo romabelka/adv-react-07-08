@@ -33,6 +33,13 @@ class ApiService {
       .collection('people')
       .add(person)
 
+  removeEntityFromCollection = (id, collectionName) =>
+    this.fb
+      .firestore()
+      .collection(collectionName)
+      .doc(id)
+      .delete()
+
   onAuthStateChanged = (callback) => this.fb.auth().onAuthStateChanged(callback)
 }
 

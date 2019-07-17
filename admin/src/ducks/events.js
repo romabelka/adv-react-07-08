@@ -1,4 +1,4 @@
-import { all, takeEvery, put, call } from 'redux-saga/effects'
+import { all, takeEvery, put, call, take } from 'redux-saga/effects'
 import { appName } from '../config'
 import { Record, List } from 'immutable'
 import { createSelector } from 'reselect'
@@ -14,6 +14,10 @@ const prefix = `${appName}/${moduleName}`
 export const FETCH_ALL_REQUEST = `${prefix}/FETCH_ALL_REQUEST`
 export const FETCH_ALL_START = `${prefix}/FETCH_ALL_START`
 export const FETCH_ALL_SUCCESS = `${prefix}/FETCH_ALL_SUCCESS`
+
+export const REMOVE_EVENT_REQUEST = `${prefix}/REMOVE_EVENT_REQUEST`
+export const REMOVE_EVENT_START = `${prefix}/REMOVE_EVENT_START`
+export const REMOVE_EVENT_SUCCESS = `${prefix}/REMOVE_EVENT_SUCCESS`
 
 /**
  * Reducer
@@ -84,9 +88,27 @@ export function fetchAllEvents() {
   }
 }
 
+export const removeEvent = (eventId) => ({
+  type: REMOVE_EVENT_REQUEST,
+  payload: { eventId }
+})
+
 /**
  * Sagas
  * */
+
+export function* removeEventSaga(action) {
+  yield put({
+    type: REMOVE_EVENT_START
+  })
+  yield call(api.removeEntityFromCollection, action.payload.eventId, 'events')
+  yield put({
+    type: REMOVE_EVENT_SUCCESS
+  })
+  yield put({
+    type: FETCH_ALL_REQUEST
+  })
+}
 
 export function* fetchAllSaga() {
   yield put({
@@ -102,5 +124,8 @@ export function* fetchAllSaga() {
 }
 
 export function* saga() {
-  yield all([takeEvery(FETCH_ALL_REQUEST, fetchAllSaga)])
+  yield all([
+    takeEvery(FETCH_ALL_REQUEST, fetchAllSaga),
+    takeEvery(REMOVE_EVENT_REQUEST, removeEventSaga)
+  ])
 }

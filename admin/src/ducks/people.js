@@ -20,6 +20,10 @@ export const FETCH_ALL_SUCCESS = `${prefix}/FETCH_ALL_SUCCESS`
 
 export const ADD_EVENT_TO_PERSON = `${prefix}/ADD_EVENT_TO_PERSON`
 
+export const REMOVE_PERSON_REQUEST = `${prefix}/REMOVE_PERSON_REQUEST`
+export const REMOVE_PERSON_START = `${prefix}/REMOVE_PERSON_START`
+export const REMOVE_PERSON_SUCCESS = `${prefix}/REMOVE_PERSON_SUCCESS`
+
 /**
  * Reducer
  * */
@@ -78,6 +82,11 @@ export const addEventToPerson = (eventId, personId) => ({
   payload: { eventId, personId }
 })
 
+export const removePerson = (personId) => ({
+  type: REMOVE_PERSON_REQUEST,
+  payload: { personId }
+})
+
 /**
  * Sagas
  */
@@ -107,9 +116,23 @@ export function* fetchAllSaga() {
   })
 }
 
+export function* removePersonSaga(action) {
+  yield put({
+    type: REMOVE_PERSON_START
+  })
+  yield call(api.removeEntityFromCollection, action.payload.personId, 'people')
+  yield put({
+    type: REMOVE_PERSON_SUCCESS
+  })
+  yield put({
+    type: FETCH_ALL_REQUEST
+  })
+}
+
 export function* saga() {
   yield all([
     takeEvery(FETCH_ALL_REQUEST, fetchAllSaga),
-    takeEvery(ADD_PERSON_REQUEST, addPersonSaga)
+    takeEvery(ADD_PERSON_REQUEST, addPersonSaga),
+    takeEvery(REMOVE_PERSON_REQUEST, removePersonSaga)
   ])
 }
