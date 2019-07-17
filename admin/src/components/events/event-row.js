@@ -1,13 +1,23 @@
 import React from 'react'
-import { DragSource } from 'react-dnd'
+import { useDrag } from 'react-dnd'
 
-function EventRow({ event, handleClick, connectDragSource, isDragging }) {
+function EventRow({ event, handleClick }) {
+  const [{ isDragging }, drag] = useDrag({
+    item: { type: `event`, id: event.id },
+    collect(monitor) {
+      return {
+        isDragging: monitor.isDragging()
+      }
+    }
+  })
+
   const dndStyle = {
     opacity: isDragging ? 0.3 : 1
   }
 
-  return connectDragSource(
+  return (
     <tr
+      ref={drag}
       data-id="event-row"
       onClick={() => handleClick(event.id)}
       style={dndStyle}
@@ -21,17 +31,4 @@ function EventRow({ event, handleClick, connectDragSource, isDragging }) {
 
 EventRow.propTypes = {}
 
-const spec = {
-  beginDrag(props) {
-    return {
-      id: props.event.id
-    }
-  }
-}
-
-const collect = (connect, monitor) => ({
-  connectDragSource: connect.dragSource(),
-  isDragging: monitor.isDragging()
-})
-
-export default DragSource('event', spec, collect)(EventRow)
+export default EventRow

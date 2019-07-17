@@ -1,17 +1,27 @@
 import React from 'react'
-import { DropTarget } from 'react-dnd'
+import { useDrop } from 'react-dnd'
 import { connect } from 'react-redux'
 import { addEventToPerson } from '../../ducks/people'
 
-function PersonItem({ person, connectDropTarget, canDrop, hovered }) {
+function PersonItem({ person, addEventToPerson }) {
+  const [{ canDrop, hovered }, drop] = useDrop({
+    accept: ['event'],
+    collect: (monitor) => ({
+      hovered: monitor.isOver(),
+      canDrop: monitor.canDrop()
+    }),
+    drop(item) {
+      addEventToPerson(item.id, person.id)
+    }
+  })
   const borderColor = canDrop ? (hovered ? 'red' : 'green') : 'black'
 
   const dndStyle = {
     border: `1px solid ${borderColor}`
   }
 
-  return connectDropTarget(
-    <li style={dndStyle}>
+  return (
+    <li ref={drop} style={dndStyle}>
       <h3>{person.email}</h3>
       <div>
         {person.firstName} {person.lastName}
@@ -22,19 +32,7 @@ function PersonItem({ person, connectDropTarget, canDrop, hovered }) {
 
 PersonItem.propTypes = {}
 
-const spec = {
-  drop(props, monitor) {
-    props.addEventToPerson(monitor.getItem().id, props.person.id)
-  }
-}
-
-const collect = (connect, monitor) => ({
-  connectDropTarget: connect.dropTarget(),
-  canDrop: monitor.canDrop(),
-  hovered: monitor.isOver()
-})
-
 export default connect(
   null,
   { addEventToPerson }
-)(DropTarget(['event'], spec, collect)(PersonItem))
+)(PersonItem)
