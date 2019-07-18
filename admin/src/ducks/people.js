@@ -20,6 +20,8 @@ export const FETCH_ALL_SUCCESS = `${prefix}/FETCH_ALL_SUCCESS`
 
 export const ADD_EVENT_TO_PERSON = `${prefix}/ADD_EVENT_TO_PERSON`
 
+export const DELETE_PERSON_REQUEST = `${prefix}/DELETE_PERSON_REQUEST`
+
 /**
  * Reducer
  * */
@@ -55,11 +57,18 @@ export default function reducer(state = new ReducerState(), action) {
  * */
 
 export const stateSelector = (state) => state[moduleName]
+export const entitiesSelector = (state) => stateSelector(state).entities
 export const peopleSelector = createSelector(
   stateSelector,
   (state) => state.entities.valueSeq().toArray()
 )
 
+export const idSelector = (_, props) => props.id
+export const personSelector = createSelector(
+  entitiesSelector,
+  idSelector,
+  (entities, id) => entities.find((person) => person.id === id)
+)
 /**
  * Action Creators
  * */
@@ -76,6 +85,11 @@ export const fetchAllPeople = () => ({
 export const addEventToPerson = (eventId, personId) => ({
   type: ADD_EVENT_TO_PERSON,
   payload: { eventId, personId }
+})
+
+export const deletePerson = (id) => ({
+  type: DELETE_PERSON_REQUEST,
+  payload: { id }
 })
 
 /**

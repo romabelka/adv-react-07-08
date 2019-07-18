@@ -4,6 +4,7 @@ import AuthPage from './components/routes/auth'
 import AdminPage from './components/routes/admin'
 import ProtectedRoute from './components/common/protected-route'
 import CustomDragLayer from './components/common/cutom-drag-layer'
+import Trash from './components/common/trash'
 
 class App extends Component {
   static propTypes = {}
@@ -35,6 +36,7 @@ class App extends Component {
           <ProtectedRoute path="/admin" component={AdminPage} />
         </section>
         <CustomDragLayer />
+        <Trash />
       </div>
     )
   }

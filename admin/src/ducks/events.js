@@ -15,6 +15,8 @@ export const FETCH_ALL_REQUEST = `${prefix}/FETCH_ALL_REQUEST`
 export const FETCH_ALL_START = `${prefix}/FETCH_ALL_START`
 export const FETCH_ALL_SUCCESS = `${prefix}/FETCH_ALL_SUCCESS`
 
+export const DELETE_EVENT_REQUEST = `${prefix}/DELETE_EVENT_REQUEST`
+
 /**
  * Reducer
  * */
@@ -84,11 +86,14 @@ export const eventSelector = createSelector(
  * Action Creators
  * */
 
-export function fetchAllEvents() {
-  return {
-    type: FETCH_ALL_REQUEST
-  }
-}
+export const fetchAllEvents = () => ({
+  type: FETCH_ALL_REQUEST
+})
+
+export const deleteEvent = (id) => ({
+  type: DELETE_EVENT_REQUEST,
+  payload: { id }
+})
 
 /**
  * Sagas
