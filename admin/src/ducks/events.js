@@ -1,4 +1,4 @@
-import { all, takeEvery, put, call } from 'redux-saga/effects'
+import { all, takeEvery, put, call, select } from 'redux-saga/effects'
 import { appName } from '../config'
 import { Record, OrderedMap } from 'immutable'
 import { createSelector } from 'reselect'
@@ -16,6 +16,7 @@ export const FETCH_ALL_START = `${prefix}/FETCH_ALL_START`
 export const FETCH_ALL_SUCCESS = `${prefix}/FETCH_ALL_SUCCESS`
 
 export const DELETE_EVENT_REQUEST = `${prefix}/DELETE_EVENT_REQUEST`
+export const DELETE_EVENT_START = `${prefix}/DELETE_EVENT_START`
 export const DELETE_EVENT_SUCCESS = `${prefix}/DELETE_EVENT_SUCCESS`
 
 /**
@@ -42,6 +43,7 @@ export default function reducer(state = new ReducerRecord(), action) {
 
   switch (type) {
     case FETCH_ALL_START:
+    case DELETE_EVENT_START:
       return state.set('loading', true)
 
     case FETCH_ALL_SUCCESS:
@@ -51,7 +53,7 @@ export default function reducer(state = new ReducerRecord(), action) {
         .set('entities', fbToEntities(payload, EventRecord))
 
     case DELETE_EVENT_SUCCESS:
-      return state.deleteIn(['entities', payload.id])
+      return state.set('loading', false).deleteIn(['entities', payload.id])
 
     default:
       return state
@@ -118,6 +120,13 @@ export function* fetchAllSaga() {
 
 export const deleteEventSaga = function*(action) {
   const { payload } = action
+  if (yield select(loadingSelector)) {
+    return
+  }
+
+  yield put({
+    type: DELETE_EVENT_START
+  })
 
   try {
     yield call(api.deleteEvent, payload.id)
