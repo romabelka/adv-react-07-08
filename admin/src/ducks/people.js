@@ -10,8 +10,10 @@ import {
   spawn,
   cancel,
   cancelled,
-  race
+  race,
+  take
 } from 'redux-saga/effects'
+import { eventChannel } from 'redux-saga'
 import { reset } from 'redux-form'
 import { createSelector } from 'reselect'
 import api from '../services/api'
@@ -34,6 +36,8 @@ export const ADD_EVENT_TO_PERSON = `${prefix}/ADD_EVENT_TO_PERSON`
 export const DELETE_PERSON_REQUEST = `${prefix}/DELETE_PERSON_REQUEST`
 export const DELETE_PERSON_SUCCESS = `${prefix}/DELETE_PERSON_SUCCESS`
 
+export const REALTIME_SYNC_UPDATE = `${prefix}/REALTIME_SYNC_UPDATE`
+
 /**
  * Reducer
  * */
@@ -52,6 +56,7 @@ export default function reducer(state = new ReducerState(), action) {
   const { type, payload } = action
 
   switch (type) {
+    case REALTIME_SYNC_UPDATE:
     case FETCH_ALL_SUCCESS:
       return state.set('entities', fbToEntities(payload, PersonRecord))
 
@@ -184,8 +189,24 @@ export function* retryWithExponentialIntervals(saga) {
   }
 }
 
+const createChanel = () =>
+  eventChannel((emit) => api.subscribeForPeople((people) => emit(people)))
+
+export function* realtimeSyncSaga() {
+  const chanel = yield call(createChanel)
+
+  while (true) {
+    const data = yield take(chanel)
+
+    yield put({
+      type: REALTIME_SYNC_UPDATE,
+      payload: data
+    })
+  }
+}
+
 export function* saga() {
-  yield spawn(cancellableSyncSaga)
+  yield spawn(realtimeSyncSaga)
 
   yield all([
     takeEvery(ADD_PERSON_REQUEST, addPersonSaga),
