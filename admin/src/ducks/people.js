@@ -1,5 +1,5 @@
 import { appName } from '../config'
-import { Record, List } from 'immutable'
+import { Record, OrderedMap } from 'immutable'
 import { takeEvery, put, call, all } from 'redux-saga/effects'
 import { reset } from 'redux-form'
 import { createSelector } from 'reselect'
@@ -21,12 +21,13 @@ export const FETCH_ALL_SUCCESS = `${prefix}/FETCH_ALL_SUCCESS`
 export const ADD_EVENT_TO_PERSON = `${prefix}/ADD_EVENT_TO_PERSON`
 
 export const DELETE_PERSON_REQUEST = `${prefix}/DELETE_PERSON_REQUEST`
+export const DELETE_PERSON_SUCCESS = `${prefix}/DELETE_PERSON_SUCCESS`
 
 /**
  * Reducer
  * */
 const ReducerState = Record({
-  entities: new List([])
+  entities: new OrderedMap([])
 })
 
 const PersonRecord = Record({
@@ -42,11 +43,14 @@ export default function reducer(state = new ReducerState(), action) {
   switch (type) {
     case ADD_PERSON_SUCCESS:
       return state.update('entities', (entities) =>
-        entities.push(new PersonRecord(payload))
+        entities.set(payload.id, new PersonRecord(payload))
       )
 
     case FETCH_ALL_SUCCESS:
       return state.set('entities', fbToEntities(payload, PersonRecord))
+
+    case DELETE_PERSON_SUCCESS:
+      return state.deleteIn(['entities', payload.id])
 
     default:
       return state
@@ -67,7 +71,7 @@ export const idSelector = (_, props) => props.id
 export const personSelector = createSelector(
   entitiesSelector,
   idSelector,
-  (entities, id) => entities.find((person) => person.id === id)
+  (entities, id) => entities.get(id)
 )
 /**
  * Action Creators
@@ -121,9 +125,21 @@ export function* fetchAllSaga() {
   })
 }
 
+export function* deletePersonSaga({ payload }) {
+  try {
+    yield call(api.deletePerson, payload.id)
+
+    yield put({
+      type: DELETE_PERSON_SUCCESS,
+      payload
+    })
+  } catch (_) {}
+}
+
 export function* saga() {
   yield all([
     takeEvery(FETCH_ALL_REQUEST, fetchAllSaga),
-    takeEvery(ADD_PERSON_REQUEST, addPersonSaga)
+    takeEvery(ADD_PERSON_REQUEST, addPersonSaga),
+    takeEvery(DELETE_PERSON_REQUEST, deletePersonSaga)
   ])
 }

@@ -1,6 +1,6 @@
 import { all, takeEvery, put, call } from 'redux-saga/effects'
 import { appName } from '../config'
-import { Record, List } from 'immutable'
+import { Record, OrderedMap } from 'immutable'
 import { createSelector } from 'reselect'
 import { fbToEntities } from '../services/utils'
 import api from '../services/api'
@@ -16,6 +16,7 @@ export const FETCH_ALL_START = `${prefix}/FETCH_ALL_START`
 export const FETCH_ALL_SUCCESS = `${prefix}/FETCH_ALL_SUCCESS`
 
 export const DELETE_EVENT_REQUEST = `${prefix}/DELETE_EVENT_REQUEST`
+export const DELETE_EVENT_SUCCESS = `${prefix}/DELETE_EVENT_SUCCESS`
 
 /**
  * Reducer
@@ -23,7 +24,7 @@ export const DELETE_EVENT_REQUEST = `${prefix}/DELETE_EVENT_REQUEST`
 export const ReducerRecord = Record({
   loading: false,
   loaded: false,
-  entities: new List([])
+  entities: new OrderedMap([])
 })
 
 export const EventRecord = Record({
@@ -49,6 +50,9 @@ export default function reducer(state = new ReducerRecord(), action) {
         .set('loaded', true)
         .set('entities', fbToEntities(payload, EventRecord))
 
+    case DELETE_EVENT_SUCCESS:
+      return state.deleteIn(['entities', payload.id])
+
     default:
       return state
   }
@@ -73,14 +77,14 @@ export const loadedSelector = createSelector(
 )
 export const eventListSelector = createSelector(
   entitiesSelector,
-  (entities) => entities.toArray()
+  (entities) => entities.valueSeq().toArray()
 )
 
 export const idSelector = (_, props) => props.id
 export const eventSelector = createSelector(
   entitiesSelector,
   idSelector,
-  (entities, id) => entities.find((event) => event.id === id)
+  (entities, id) => entities.get(id)
 )
 /**
  * Action Creators
@@ -112,6 +116,22 @@ export function* fetchAllSaga() {
   })
 }
 
+export const deleteEventSaga = function*(action) {
+  const { payload } = action
+
+  try {
+    yield call(api.deleteEvent, payload.id)
+
+    yield put({
+      type: DELETE_EVENT_SUCCESS,
+      payload
+    })
+  } catch (_) {}
+}
+
 export function* saga() {
-  yield all([takeEvery(FETCH_ALL_REQUEST, fetchAllSaga)])
+  yield all([
+    takeEvery(FETCH_ALL_REQUEST, fetchAllSaga),
+    takeEvery(DELETE_EVENT_REQUEST, deleteEventSaga)
+  ])
 }
