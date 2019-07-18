@@ -1,6 +1,14 @@
 import { appName } from '../config'
 import { Record, OrderedMap } from 'immutable'
-import { takeEvery, put, call, all } from 'redux-saga/effects'
+import {
+  takeEvery,
+  put,
+  call,
+  all,
+  delay,
+  fork,
+  spawn
+} from 'redux-saga/effects'
 import { reset } from 'redux-form'
 import { createSelector } from 'reselect'
 import api from '../services/api'
@@ -41,11 +49,6 @@ export default function reducer(state = new ReducerState(), action) {
   const { type, payload } = action
 
   switch (type) {
-    case ADD_PERSON_SUCCESS:
-      return state.update('entities', (entities) =>
-        entities.set(payload.id, new PersonRecord(payload))
-      )
-
     case FETCH_ALL_SUCCESS:
       return state.set('entities', fbToEntities(payload, PersonRecord))
 
@@ -136,9 +139,19 @@ export function* deletePersonSaga({ payload }) {
   } catch (_) {}
 }
 
+export function* syncWithPollingSaga() {
+  let i = 0
+  while (true) {
+    if (i++ >= 3) throw new Error('some network error')
+    yield call(fetchAllSaga)
+    yield delay(3000)
+  }
+}
+
 export function* saga() {
+  yield spawn(syncWithPollingSaga)
+
   yield all([
-    takeEvery(FETCH_ALL_REQUEST, fetchAllSaga),
     takeEvery(ADD_PERSON_REQUEST, addPersonSaga),
     takeEvery(DELETE_PERSON_REQUEST, deletePersonSaga)
   ])
