@@ -190,7 +190,9 @@ export function* retryWithExponentialIntervals(saga) {
 }
 
 const createChanel = () =>
-  eventChannel((emit) => api.subscribeForPeople((people) => emit(people)))
+  eventChannel((emit) =>
+    api.subscribeForCollection('people', (people) => emit(people))
+  )
 
 export function* realtimeSyncSaga() {
   const chanel = yield call(createChanel)

@@ -28,10 +28,10 @@ class ApiService {
       .get()
       .then((res) => res.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
 
-  subscribeForPeople = (callback) =>
+  subscribeForCollection = (collectionName, callback) =>
     this.fb
       .firestore()
-      .collection('people')
+      .collection(collectionName)
       .onSnapshot((snapshot) => callback(resToEntities(snapshot)))
 
   addPerson = (person) =>
