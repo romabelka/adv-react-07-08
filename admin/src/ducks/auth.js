@@ -1,8 +1,17 @@
 import { appName } from '../config'
-import { all, takeEvery, take, call, put, delay } from 'redux-saga/effects'
+import {
+  all,
+  takeEvery,
+  take,
+  call,
+  put,
+  delay,
+  spawn
+} from 'redux-saga/effects'
 import { Record } from 'immutable'
 import { createSelector } from 'reselect'
 import api from '../services/api'
+import { eventChannel } from 'redux-saga'
 
 /**
  * Constants
@@ -23,6 +32,8 @@ export const SIGN_UP_REQUEST = `${prefix}/SIGN_UP_REQUEST`
 export const SIGN_IN_ERROR_LIMIT = `${prefix}/SIGN_IN_ERROR_LIMIT`
 export const SIGN_IN_ERROR_LIMIT_CLEAR = `${prefix}/SIGN_IN_ERROR_LIMIT_CLEAR`
 
+export const REALTIME_SIGN_IN_SUCCESS = `${prefix}/REALTIME_SIGN_IN_SUCCESS`
+
 /**
  * Reducer
  * */
@@ -42,6 +53,7 @@ export default function reducer(state = new ReducerRecord(), action) {
 
     case SIGN_IN_SUCCESS:
     case SIGN_UP_SUCCESS:
+    case REALTIME_SIGN_IN_SUCCESS:
       return state.set('loading', false).set('user', payload.user)
 
     case SIGN_IN_ERROR:
@@ -85,18 +97,25 @@ export function signUp(email, password) {
  * Init logic
  */
 
-export function init(store) {
-  api.onAuthStateChanged((user) => {
-    store.dispatch({
-      type: SIGN_IN_SUCCESS,
-      payload: { user }
-    })
-  })
-}
-
 /**
  *Sagas
  **/
+
+const createChanel = () =>
+  eventChannel((emit) => api.subscribeForAuth((user) => emit({ user })))
+
+export function* realtimeAuthSaga() {
+  const chanel = yield call(createChanel)
+
+  while (true) {
+    const user = yield take(chanel)
+
+    yield put({
+      type: REALTIME_SIGN_IN_SUCCESS,
+      payload: { user }
+    })
+  }
+}
 
 export function* signInSaga() {
   let errors = 0
@@ -161,5 +180,6 @@ export function* signUpSaga({ payload }) {
 }
 
 export function* saga() {
+  yield spawn(realtimeAuthSaga)
   yield all([signInSaga(), takeEvery(SIGN_UP_REQUEST, signUpSaga)])
 }

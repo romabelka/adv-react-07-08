@@ -1,9 +1,18 @@
-import { all, takeEvery, put, call, select } from 'redux-saga/effects'
+import {
+  all,
+  takeEvery,
+  put,
+  call,
+  select,
+  take,
+  spawn
+} from 'redux-saga/effects'
 import { appName } from '../config'
 import { Record, OrderedMap } from 'immutable'
 import { createSelector } from 'reselect'
 import { fbToEntities } from '../services/utils'
 import api from '../services/api'
+import { eventChannel } from 'redux-saga'
 
 /**
  * Constants
@@ -18,6 +27,8 @@ export const FETCH_ALL_SUCCESS = `${prefix}/FETCH_ALL_SUCCESS`
 export const DELETE_EVENT_REQUEST = `${prefix}/DELETE_EVENT_REQUEST`
 export const DELETE_EVENT_START = `${prefix}/DELETE_EVENT_START`
 export const DELETE_EVENT_SUCCESS = `${prefix}/DELETE_EVENT_SUCCESS`
+
+export const REALTIME_EVENTS_UPDATE = `${prefix}/REALTIME_EVENTS_UPDATE`
 
 /**
  * Reducer
@@ -47,13 +58,14 @@ export default function reducer(state = new ReducerRecord(), action) {
       return state.set('loading', true)
 
     case FETCH_ALL_SUCCESS:
+    case REALTIME_EVENTS_UPDATE:
       return state
         .set('loading', false)
         .set('loaded', true)
         .set('entities', fbToEntities(payload, EventRecord))
 
     case DELETE_EVENT_SUCCESS:
-      return state.set('loading', false).deleteIn(['entities', payload.id])
+      return state.set('loading', false)
 
     default:
       return state
@@ -105,6 +117,24 @@ export const deleteEvent = (id) => ({
  * Sagas
  * */
 
+const createChanel = () =>
+  eventChannel((emit) =>
+    api.subscribeForCollection('events', (events) => emit(events))
+  )
+
+export function* realtimeSyncSaga() {
+  const chanel = yield call(createChanel)
+
+  while (true) {
+    const data = yield take(chanel)
+
+    yield put({
+      type: REALTIME_EVENTS_UPDATE,
+      payload: data
+    })
+  }
+}
+
 export function* fetchAllSaga() {
   yield put({
     type: FETCH_ALL_START
@@ -139,6 +169,8 @@ export const deleteEventSaga = function*(action) {
 }
 
 export function* saga() {
+  yield spawn(realtimeSyncSaga)
+
   yield all([
     takeEvery(FETCH_ALL_REQUEST, fetchAllSaga),
     takeEvery(DELETE_EVENT_REQUEST, deleteEventSaga)
