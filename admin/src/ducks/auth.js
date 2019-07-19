@@ -102,7 +102,7 @@ export function signUp(email, password) {
  **/
 
 const createChanel = () =>
-  eventChannel((emit) => api.subscribeForAuth((user) => emit(user)))
+  eventChannel((emit) => api.subscribeForAuth((user) => emit({ user })))
 
 export function* realtimeAuthSaga() {
   const chanel = yield call(createChanel)
