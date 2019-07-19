@@ -54,7 +54,7 @@ class ApiService {
       .doc(id)
       .delete()
 
-  onAuthStateChanged = (callback) => this.fb.auth().onAuthStateChanged(callback)
+  subscribeForAuth = (callback) => this.fb.auth().onAuthStateChanged(callback)
 }
 
 function resToEntities(res) {
