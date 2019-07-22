@@ -1,13 +1,10 @@
 import React from 'react'
-import Enzyme, { shallow, render, mount } from 'enzyme'
-import Adapter from 'enzyme-adapter-react-16'
+import { shallow, render, mount } from 'enzyme'
 import { EventsTable } from './events-table'
 import conferences from '../../mocks/conferences'
 import Loader from '../common/loader'
 
 const events = conferences.map((conf, id) => ({ ...conf, id }))
-
-Enzyme.configure({ adapter: new Adapter() })
 
 describe('EventsTable', () => {
   it('should render a loader', () => {
