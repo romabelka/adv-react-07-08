@@ -16,14 +16,17 @@ jest.mock('../../services/api', () => ({
 
 describe('IT Events Table', () => {
   it('should fetch an events', (done) => {
-    mount(
+    const table = mount(
       <Provider store={store}>
         <EventsTable />
       </Provider>
     )
 
     setTimeout(() => {
-      expect(store.getState().events.entities.size).toEqual(mockEvents.length)
+      table.update()
+      expect(table.find('[data-id="event-row"]').length).toEqual(
+        mockEvents.length
+      )
       done()
     }, 0)
   })
