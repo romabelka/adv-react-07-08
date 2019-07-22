@@ -5,7 +5,8 @@ module.exports = {
     Query: {
         allEvents: () => new Promise(resolve => setTimeout(
             () => resolve(Object.values(events))
-        , 500))
+        , 500)),
+        event: (_, { id }) => events[id]
     },
     Event: {
         people: (event) => event.peopleIds.map(id => people.find(person => person.id === id))

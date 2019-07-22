@@ -1,6 +1,7 @@
 type Event {
     id: ID
     title: String
+    url: String
     people: [Person]
 }
 
@@ -11,4 +12,5 @@ type Person {
 
 type Query {
     allEvents: [Event]
+    event(id: ID): Event
 }
