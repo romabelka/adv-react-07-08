@@ -46,6 +46,7 @@ export default function reducer(state = new ReducerRecord(), action) {
 
     case SIGN_IN_SUCCESS:
     case SIGN_UP_SUCCESS:
+    case AUTH_STATE_CHANGE:
       return state.set('loading', false).set('user', payload.user)
 
     case SIGN_IN_ERROR:
