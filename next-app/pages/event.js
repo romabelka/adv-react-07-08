@@ -1,14 +1,16 @@
 import React from 'react'
+import EventList from "../components/event-list";
 
 function EventPage({ event }) {
     return (
         <div>
           <h1>{event.title}</h1>
+            <EventList />
         </div>
     )
 }
 
-const query = `
+const eventQuery = `
     query Event($id: ID) {
         event(id: $id) {
             title
@@ -21,15 +23,13 @@ const query = `
     }
 `
 
-EventPage.getInitialProps = async () => {
-    console.log(123)
-
+EventPage.getInitialProps = async ({ query }) => {
     const res = await fetch('http://localhost:5000' , {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({
-            query,
-            variables: { id: '25yW1tqFogDRCAcPtLQA'}
+            query: eventQuery,
+            variables: { id: query.id }
         })
     })
 
