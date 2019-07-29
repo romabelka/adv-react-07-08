@@ -1,16 +1,7 @@
 import React, { useState } from 'react'
-import gql from 'graphql-tag'
 import {Query} from "react-apollo";
-
-const query = gql`query Event($id: ID) {
-    event(id: $id) {
-        url
-        people {
-            id
-            name
-        }
-    }
-}`
+import PersonForm from "./person-form";
+import eventQuery from '../graphql/event-query'
 
 function Event({event}) {
     const [isOpen, setOpen] = useState(false)
@@ -26,13 +17,14 @@ function Event({event}) {
 
 function getBody(event) {
     return (
-        <Query query={query} variables={{id: event.id}}>
+        <Query query={eventQuery} variables={{id: event.id}}>
             {({loading, data}) => {
                 if (loading) return <h1>Loading...</h1>
                 return (
                     <div>
                         <p>{data.event.url}</p>
                         <p>{data.event.people.map(person => person.name).join('; ')}</p>
+                        <PersonForm event={event}/>
                     </div>
 
                 )

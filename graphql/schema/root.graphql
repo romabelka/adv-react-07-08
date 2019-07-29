@@ -14,3 +14,7 @@ type Query {
     allEvents: [Event]
     event(id: ID): Event
 }
+
+type Mutation {
+    addPersonToEvent(eventId: ID!, name: String!): Person
+}
