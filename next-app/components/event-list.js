@@ -14,7 +14,7 @@ function EventList() {
                 if (loading) return <h1>Loading...</h1>
                 return data.allEvents.map(event => (
                     <div key={event.id}>
-                        <Link href={`/event?id=${event.id}`}>
+                        <Link href={`/event?id=${event.id}`} as={`/event/${event.id}`}>
                             <a>
                                 {event.title}
                             </a>
