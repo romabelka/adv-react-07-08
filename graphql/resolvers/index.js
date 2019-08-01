@@ -6,7 +6,9 @@ module.exports = {
         allEvents: () => new Promise(resolve => setTimeout(
             () => resolve(Object.values(events))
         , 500)),
-        event: (_, { id }) => events[id]
+        event: (_, { id }) => events[id],
+        allPeople: () => people,
+        person: (_, { id }) => people.find(person => person.id === id)
     },
     Mutation: {
         addPersonToEvent: (_, { eventId, name }) => {
