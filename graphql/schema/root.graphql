@@ -13,6 +13,8 @@ type Person {
 type Query {
     allEvents: [Event]
     event(id: ID): Event
+    allPeople: [Person]
+    person(id: ID): Person
 }
 
 type Mutation {
