@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import {View, StyleSheet, Text, ActivityIndicator} from 'react-native'
+import {ScrollView, StyleSheet, Text, ActivityIndicator} from 'react-native'
 import stores from '../stores'
 import {observer} from "mobx-react";
 
@@ -15,7 +15,7 @@ class EventsScreen extends Component {
 
     render() {
         return (
-            <View>
+            <ScrollView>
                 {stores.eventsStore.loading && <ActivityIndicator />}
                 {
                     stores.eventsStore.entities.map(event => (
@@ -24,7 +24,7 @@ class EventsScreen extends Component {
                         </Text>
                     ))
                 }
-            </View>
+            </ScrollView>
         )
     }
 }
