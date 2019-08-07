@@ -19,7 +19,7 @@ class EventsScreen extends Component {
         stores.eventsStore.fetchAll()
     }
 
-    render() { 
+    render() {
         return (
             <ScrollView>
                 {stores.eventsStore.loading && <ActivityIndicator />}
