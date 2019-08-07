@@ -25,10 +25,10 @@ class EventsScreen extends Component {
                 {stores.eventsStore.loading && <ActivityIndicator />}
                 <SectionList
                     renderItem={({ item, index, section }) => (
-                        <Text key={index}>{item}</Text>
+                        <Text style={styles.item} key={index}>{item}</Text>
                     )}
                     renderSectionHeader={({ section: { title } }) => (
-                        <Text style={{ fontWeight: 'bold' }}>{title}</Text>
+                        <Text style={styles.header}>{title}</Text>
                     )}
                     sections={stores.eventsStore.entities.map(
                         ({ title, ...rest }) => ({
@@ -44,6 +44,18 @@ class EventsScreen extends Component {
 }
 
 const styles = StyleSheet.create({
+    header: {
+        paddingLeft: 10,
+        fontWeight: "bold"
+    },
+    item: {
+        elevation:4,
+        shadowOffset: { width: 5, height: 5 },
+        shadowColor: "grey",
+        shadowOpacity: 0.5,
+        shadowRadius: 10,
+        paddingLeft: 20
+    }
 })
 
 export default EventsScreen
