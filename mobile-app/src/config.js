@@ -1,11 +1,11 @@
-export const appName = 'advreact-08-07'
+export const appName = 'advreact-08-07-11d10'
 
 export const firebaseConfig = {
-  apiKey: 'AIzaSyDNIbySBWf_3OSgFG_--aTR_5vsGSCbFXU',
+  apiKey: 'AIzaSyCEy-hskirtYT34keQnwbi_3qLll1a3huk',
   authDomain: `${appName}.firebaseapp.com`,
   databaseURL: `https://${appName}.firebaseio.com`,
   projectId: `${appName}`,
-  storageBucket: '',
-  messagingSenderId: '704376755167',
-  appId: '1:704376755167:web:3a9fa5875df17947'
+  storageBucket: `${appName}.appspot.com`,
+  messagingSenderId: '514027659045',
+  appId: '1:514027659045:web:83d3dd90fc94a7e9'
 }

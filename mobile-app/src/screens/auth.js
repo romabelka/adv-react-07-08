@@ -1,24 +1,40 @@
-import React from 'react'
-import {Text, View, TextInput, Button, Platform} from 'react-native'
+import React, {useState} from 'react'
+import {Text, View, TextInput, Button, Platform, ActivityIndicator} from 'react-native'
 import AuthHeading from '../components/auth-heading'
+import { observer } from 'mobx-react';
+import stores from '../stores';
 
-export default function AuthScreen() {
+function AuthScreen() {
+    const email = stores.signInFormStore.email
+    const password = stores.signInFormStore.password
+    const signIn = () => {
+        stores.authStore.signIn(email, password)
+    }
     return (
         <View>
+            {stores.authStore.loading && <ActivityIndicator />}
             <AuthHeading />
             <View>
                 <Text style={{
                     fontSize: 20,
                     color: '#ff0000'
                 }}>Email:</Text>
-                <TextInput style={styles.input} />
+                <TextInput
+                    value={email}
+                    onChangeText={(text)=> stores.signInFormStore.email = text}
+                    style={styles.input}
+                />
             </View>
             <View>
                 <Text style={styles.text}>Password:</Text>
-                <TextInput  style={styles.input}/>
+                <TextInput
+                    value={password}
+                    onChangeText={(text)=> stores.signInFormStore.password = text}
+                    style={styles.input}
+                />
             </View>
             <View>
-                <Button onPress={() => console.log('sign in')} title="Sign In"/>
+                <Button onPress={signIn} title="Sign In"/>
             </View>
         </View>
     )
@@ -41,3 +57,5 @@ const styles = {
         })
     }
 }
+
+export default observer(AuthScreen)
