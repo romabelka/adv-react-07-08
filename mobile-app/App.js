@@ -1,11 +1,11 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import AuthScreen from "./src/screens/auth";
+import EventsScreen from "./src/screens/events";
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <AuthScreen/>
+      <EventsScreen/>
     </View>
   );
 }

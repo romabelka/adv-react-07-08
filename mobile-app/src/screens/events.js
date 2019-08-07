@@ -8,6 +8,7 @@ import {
 } from 'react-native'
 import stores from '../stores'
 import {observer} from "mobx-react";
+import Event from "./event"
 
 @observer
 class EventsScreen extends Component {
@@ -19,19 +20,30 @@ class EventsScreen extends Component {
         stores.eventsStore.fetchAll()
     }
 
+    openEvent = (id) => () => {
+        stores.eventsStore.openedEventId = id
+    }
+
+    closeEvent = () => {
+        stores.eventsStore.openedEventId = null
+    }
+
     render() {
-        return (
+        return !stores.eventsStore.openedEventId ? (
             <ScrollView>
                 {stores.eventsStore.loading && <ActivityIndicator />}
                 <SectionList
                     renderItem={({ item, index, section }) => (
                         <Text style={styles.item} key={index}>{item}</Text>
                     )}
-                    renderSectionHeader={({ section: { title } }) => (
-                        <Text style={styles.header}>{title}</Text>
+                    renderSectionHeader={({ section: { title, id } }) => (
+                        <Text onPress={this.openEvent(id)} style={styles.header}>
+                            {title}
+                        </Text>
                     )}
                     sections={stores.eventsStore.entities.map(
-                        ({ title, ...rest }) => ({
+                        ({ title, id, ...rest }) => ({
+                            id,
                             title,
                             data: Object.values(rest).filter((item) => !!item)
                         })
@@ -39,7 +51,7 @@ class EventsScreen extends Component {
                     keyExtractor={(item, index) => item + index}
                 />
             </ScrollView>
-        )
+        ) : <Event id={stores.eventsStore.openedEventId} onClose={this.closeEvent}/>
     }
 }
 
