@@ -1,20 +1,25 @@
-import {observable} from 'mobx'
+import {observable, action} from 'mobx'
 import apiService from '../services/api'
 
 export default class EventsStore {
     @observable entities = []
     @observable loading = false
 
+    @action setLoading = loading => this.loading = loading
+    @action setEntities = entities => this.entities = entities
+
+    getById = id => this.entities.find(event => event.id === id)
+
     get size() {
 
     }
 
     fetchAll = async () => {
-        this.loading = true
+        this.setLoading(true)
 
-        this.entities = await apiService.fetchAllEvents()
+        this.setEntities(await apiService.fetchAllEvents())
 
-        this.loading = false
+        this.setLoading(false)
     }
 }
 

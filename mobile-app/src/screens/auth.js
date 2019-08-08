@@ -33,10 +33,15 @@ export default class AuthScreen extends React.Component {
                     <IsValidPassword />
                 </View>
                 <View>
-                    <Button onPress={stores.auth.signIn} title="Sign In"/>
+                    <Button onPress={this.handleSignIn} title="Sign In"/>
                 </View>
             </View>
         )
+    }
+
+    handleSignIn = () => {
+        stores.auth.signIn()
+        this.props.navigation.navigate('events')
     }
 }
 

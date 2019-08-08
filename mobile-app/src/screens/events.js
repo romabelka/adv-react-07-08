@@ -10,13 +10,22 @@ class EventsScreen extends Component {
 
     };
 
+    static navigationOptions = {
+        title: 'Events'
+    }
+
+
     componentDidMount() {
         stores.events.fetchAll()
     }
 
     render() {
         if (stores.events.loading) return <ActivityIndicator/>
-        return <EventList events={stores.events.entities}/>
+        return <EventList events={stores.events.entities}
+                          handlePress={(event) => {
+                              this.props.navigation.navigate('event', event )
+                          }}
+        />
     }
 }
 

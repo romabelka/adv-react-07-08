@@ -1,22 +1,7 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import EventsScreen from "./src/screens/events";
-import AuthScreen from "./src/screens/auth";
-import EventScreen from "./src/screens/event";
+import AppNavigator from './src/components/app-navigator'
 
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <AuthScreen />
-    </View>
-  );
+  console.log('---', 123)
+  return <AppNavigator />
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

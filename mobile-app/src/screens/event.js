@@ -1,19 +1,18 @@
 import React, {Component} from 'react'
 import Event from "../components/events/event";
+import stores from '../stores'
+import {observer} from "mobx-react";
 
-const event = {
-    id: '123',
-    title: 'Agent Conf',
-    url: 'http://www.agent.sh/',
-    where: 'Dornbirn, Austria',
-    when: 'January 20-21, 2017',
-    month: 'January',
-    submissionDeadline: ''
-}
-
-
+@observer
 export default class EventScreen extends Component {
+    static navigationOptions = ({ navigation }) => {
+        return {
+            title: navigation.state.params.title
+        }
+    }
+
     render() {
-        return <Event event={event}/>
+        const { id } = this.props.navigation.state.params
+        return <Event event={stores.events.getById(id)}/>
     }
 }
