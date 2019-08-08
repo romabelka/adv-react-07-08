@@ -3,6 +3,7 @@ import {Text, View, TextInput, Button, Platform} from 'react-native'
 import AuthHeading from '../components/auth-heading'
 import stores from '../stores'
 import {observer} from "mobx-react";
+import IsValidPassword from "../components/is-valid-password";
 
 @observer
 export default class AuthScreen extends React.Component {
@@ -18,7 +19,7 @@ export default class AuthScreen extends React.Component {
                     <TextInput
                         style={styles.input}
                         value={stores.auth.email}
-                        onChangeText={email => stores.auth.email = email}
+                        onChangeText={stores.auth.setEmail}
                     />
                 </View>
                 <View>
@@ -27,8 +28,9 @@ export default class AuthScreen extends React.Component {
                         secureTextEntry
                         style={styles.input}
                         value={stores.auth.password}
-                        onChangeText={password => stores.auth.password = password}
+                        onChangeText={stores.auth.setPassword}
                     />
+                    <IsValidPassword />
                 </View>
                 <View>
                     <Button onPress={stores.auth.signIn} title="Sign In"/>

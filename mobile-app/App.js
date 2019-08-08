@@ -7,7 +7,7 @@ import EventScreen from "./src/screens/event";
 export default function App() {
   return (
     <View style={styles.container}>
-      <EventScreen />
+      <AuthScreen />
     </View>
   );
 }
