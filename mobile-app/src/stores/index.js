@@ -1,5 +1,7 @@
 import EventsStore from './events'
+import AuthStore from "./auth";
 
 export default {
-    eventsStore: new EventsStore()
+    events: new EventsStore(),
+    auth: new AuthStore()
 }

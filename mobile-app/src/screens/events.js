@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
-import {ScrollView, StyleSheet, Text, ActivityIndicator} from 'react-native'
+import { StyleSheet, ActivityIndicator} from 'react-native'
 import stores from '../stores'
 import {observer} from "mobx-react";
+import EventList from "../components/events/event-list";
 
 @observer
 class EventsScreen extends Component {
@@ -10,22 +11,12 @@ class EventsScreen extends Component {
     };
 
     componentDidMount() {
-        stores.eventsStore.fetchAll()
+        stores.events.fetchAll()
     }
 
     render() {
-        return (
-            <ScrollView>
-                {stores.eventsStore.loading && <ActivityIndicator />}
-                {
-                    stores.eventsStore.entities.map(event => (
-                        <Text key={event.id}>
-                            {event.title}
-                        </Text>
-                    ))
-                }
-            </ScrollView>
-        )
+        if (stores.events.loading) return <ActivityIndicator/>
+        return <EventList events={stores.events.entities}/>
     }
 }
 

@@ -26,7 +26,7 @@ class ApiService {
       .firestore()
       .collection('people')
       .get()
-      .then((res) => res.docs.map((doc) => ({ ...doc.data(), id: doc.id })))
+      .then(resToEntities)
 
   subscribeForPeople = (callback) =>
     this.fb
@@ -39,20 +39,6 @@ class ApiService {
       .firestore()
       .collection('people')
       .add(person)
-
-  deleteEvent = (id) =>
-    this.fb
-      .firestore()
-      .collection('events')
-      .doc(id)
-      .delete()
-
-  deletePerson = (id) =>
-    this.fb
-      .firestore()
-      .collection('people')
-      .doc(id)
-      .delete()
 
   onAuthStateChanged = (callback) => this.fb.auth().onAuthStateChanged(callback)
 }
